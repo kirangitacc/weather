@@ -59,11 +59,11 @@ const DailyItem = props => {
         <div className="temp">
           <p className="po">
             {temp}
-            <sup>o</sup>/
+            <sup className="po">o</sup>/
           </p>
           <p className="po1">
             {minTemp}
-            <sup>o</sup>
+            <sup className="po1">o</sup>
           </p>
         </div>
         <h1 className="pi">{icon}</h1>
@@ -117,7 +117,7 @@ class WeatherDashboard extends Component {
   getBlogItemData = async () => {
     this.setState({searchInput: ''})
     const re = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/bapatla?unitGroup=us&key=3BHQ74CEVSVY3MJMWHJJG7HFM&contentType=json`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/hyderabad?unitGroup=us&key=3BHQ74CEVSVY3MJMWHJJG7HFM&contentType=json`,
     )
     const r = await re.json()
 
@@ -129,7 +129,7 @@ class WeatherDashboard extends Component {
     this.setState({sset: sunset})
 
     const response = await fetch(
-      `https://api.weatherapi.com/v1/current.json?key=2cab70eda4434e46b0165459240402&q=bapatla&aqi=yes`,
+      `https://api.weatherapi.com/v1/current.json?key=2cab70eda4434e46b0165459240402&q=hyderabad&aqi=yes`,
     )
 
     const data = await response.json()
@@ -236,7 +236,7 @@ class WeatherDashboard extends Component {
         <div className="upper">
           <h1 className="h1">{location}</h1>
           <p className="p p1">
-            {temp} <sup className="red">o</sup>
+            {temp} <sup className="p p1">o</sup>
           </p>
           <p className="p p2">{condition}</p>
           <p className="p p3">humidity: {humidit}</p>
@@ -248,11 +248,13 @@ class WeatherDashboard extends Component {
           <p className="p p1">Sunset: {sset}</p>
           <img src={mainImg} className="img" alt="img" />
         </div>
+        <h1 clsssName="head2">Daily Forecast</h1>
         <ul className="bg2">
           {forecast.map(day => (
             <DailyItem key={day.datetime} forecastDetails={day} />
           ))}
         </ul>
+        <h1 clsssName="head2">Hourly Forecast</h1>
         <ul className="bg3">
           {hour.map(eachHour => (
             <HourItem key={eachHour.datetime} hourDetails={eachHour} />
