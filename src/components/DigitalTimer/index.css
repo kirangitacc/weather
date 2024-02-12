@@ -3,7 +3,9 @@
   box-sizing: border-box;
   font-family: 'Roboto';
   color: green;
+  font-size: 25px;
 }
+
 .hour {
   display: flex;
   flex-direction: column;
@@ -19,6 +21,7 @@
   display: flex;
   width: 75%;
   overflow-x: scroll;
+
 }
 .sun1 {
   color: white;
@@ -39,6 +42,7 @@ body {
 h1 {
   align-self: center;
   margin: 10px;
+  margin-top:20px;
   margin-left: 40px;
   font-size: 20px;
   color: black;
@@ -174,7 +178,9 @@ sup {
 }
 
 .p {
-  margin: 10px;
+  margin-left: 0px;
+  margin-top: 10px;
+  margin-right:10px;
   font-size: 15px;
   font-weight: bold;
 }
@@ -288,10 +294,11 @@ sup {
   .sun1 {
     align-self: center;
   }
-
-  .p {
-    margin: 20px;
-    font-size: 20px;
+  .p{
+    margin-left:0px;
+    margin-top: 10px;
+    margin-right:10px;
+    font-size: 15px;
   }
   .mini1 {
     margin-right: 5px;
