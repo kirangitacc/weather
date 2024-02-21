@@ -1,9 +1,12 @@
-/* Write your CSS here */
 * {
   box-sizing: border-box;
   font-family: 'Roboto';
   color: green;
   font-size: 25px;
+}
+
+.plk{
+  color:white;
 }
 
 .hour {
@@ -18,10 +21,14 @@
   min-width: 50vw;
 }
 .bg3 {
+  display: none;
+  width:90%;
+}
+.bg4 {
   display: flex;
-  width: 75%;
+  width: 60%;
   overflow-x: scroll;
-
+  margin-left:80px;
 }
 .sun1 {
   color: white;
@@ -39,6 +46,25 @@ body {
   color: black;
   font-size: 20px;
 }
+
+.container11 {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  margin: 10px;
+  padding: 10px;
+  align-self:center;
+  overflow-x: scroll;
+}
+
+.heading11 {
+  color: #94a3b8;
+  font-family: 'Roboto';
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
 h1 {
   align-self: center;
   margin: 10px;
@@ -91,6 +117,7 @@ h1 {
   width: 60vw;
   overflow-y: scroll;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .img {
@@ -108,11 +135,14 @@ h1 {
 
 .bg2 {
   display: flex;
-  width: 90%;
-  height: 70%;
+  width: 75%;
+  height: 50%;
   align-items: flex-start;
   margin-right: 15px;
+  margin-left:50px;
   overflow-x: scroll;
+  padding:0px;
+  margin-top:0px;
 }
 .h1 {
   font-size: 20px;
@@ -260,7 +290,7 @@ sup {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    margin: 10;
+    margin: 10px;
     align-self: center;
     justify-content: center;
     border: 1px solid black;
@@ -269,6 +299,13 @@ sup {
     margin-top: 0px;
     width: 80%;
   }
+  .products-loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }  
+  
   .home {
     color: white;
     background-color: orangered;
@@ -286,9 +323,9 @@ sup {
     justify-content: flex-start;
     align-items: center;
     align-self: flex-start;
-
-    margin: 10px;
-    width: 100%;
+    margin-left:70px;
+    
+    width: 90%;
     overflow-x: scroll;
   }
   .sun1 {
@@ -305,7 +342,7 @@ sup {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    min-width: 25%;
+    min-width: 20%;
     align-items: center;
     background-color: #ffffcc;
     border: 3px solid goldenrod;
@@ -344,6 +381,13 @@ sup {
     min-width: 20vw;
   }
   .bg3 {
-    width: 100%;
+    display:flex;
+    width: 90%;
+    margin-left:80px;
+    justify-content: center;
+
+  }
+  .bg4{
+    display:none;
   }
 }
