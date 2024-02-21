@@ -1,10 +1,60 @@
-// Write your code here
-import {Component} from 'react'
+import {Component} from 'react';
 
-import './index.css'
+import {BarChart, Bar, XAxis, YAxis,LabelList} from 'recharts';
+
+import Loader from 'react-loader-spinner'
+
+import './index.css';
+
+const HourlyCoverage = props => {
+
+  const {hourDetails} = props
+
+  return (
+    <div className="container11">
+      <BarChart
+        width={2500}
+        height={300}
+        data={hourDetails}
+        margin={{
+          top: 5,
+        }}
+      >
+        <XAxis
+          dataKey="datetime"
+          tick={{
+            stroke: '#6c757d',
+            strokeWidth: 1,
+            fontSize: 10,
+            fontFamily: 'Roboto',
+          }}
+        />
+        <YAxis
+          tick={{
+            stroke: '#6c757d',
+            strokeWidth: 0.5,
+            fontSize: 15,
+            fontFamily: 'Roboto',
+          }}
+        />
+        <Bar
+          dataKey="temp"
+          name="temp"
+          fill="orange"
+          radius={[5, 5, 0, 0]}
+          barSize="5%"
+
+        >
+           <LabelList dataKey="temp" position="outside" style= { { fill: "white" }} />
+
+           </Bar>
+      </BarChart>
+    </div>
+  )
+}
 
 const DailyItem = props => {
-  const {forecastDetails} = props
+  const {forecastDetails,isLoading} = props
 
   const {icon, datetime, feelslikemin, feelslikemax, sunrise, sunset} =
     forecastDetails
@@ -50,6 +100,7 @@ const DailyItem = props => {
   return (
     <>
       <li className="mini1">
+        {isLoading?(<Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />):(<>
         <p className="ph ml-3">
           {da} {month}
         </p>
@@ -66,24 +117,27 @@ const DailyItem = props => {
             <sup className="po1">o</sup>
           </p>
         </div>
-        <h1 className="pi">{icon}</h1>
+        <h1 className="pi">{icon}</h1></>)}
       </li>
     </>
   )
 }
 
 const HourItem = props => {
-  const {hourDetails} = props
+  const {hourDetails,isLoading} = props
   const {humidity, temp, datetime} = hourDetails
+
   return (
     <>
       <div className="hour">
+        {isLoading?(<Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />):(
+        <>
         <p className="sun1">hour: {datetime}</p>
         <p className="sun1">
           temp: {temp}
           <sup className="sun1">o</sup>
         </p>
-        <p className="sun1">humidity: {humidity}</p>
+        <p className="sun1">humidity: {humidity}</p></>)}
       </div>
     </>
   )
@@ -91,6 +145,7 @@ const HourItem = props => {
 
 class WeatherDashboard extends Component {
   state = {
+    name:'',
     temp: '',
     searchInput: '',
     location: '',
@@ -104,32 +159,51 @@ class WeatherDashboard extends Component {
     srise: '',
     sset: '',
     hour: [],
+    lat:'',
+    lng:'',
+    isLoading: false,
   }
 
   componentDidMount() {
-    this.getBlogItemData()
+    this. getMyLocation()
   }
 
   onChangeSearchInput = event => {
     this.setState({searchInput: event.target.value})
   }
 
-  getBlogItemData = async () => {
+  getBlogItemData = async (o) => {
+
+    this.setState({
+      isLoading: true,
+    })
+
     this.setState({searchInput: ''})
+
     const re = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/hyderabad?unitGroup=us&key=3BHQ74CEVSVY3MJMWHJJG7HFM&contentType=json`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${o}?unitGroup=us&key=3BHQ74CEVSVY3MJMWHJJG7HFM&contentType=json`,
     )
     const r = await re.json()
 
     this.setState({forecast: r.days.slice(1, 8)})
     const {sunrise, sunset, hours} = r.days[0]
 
-    this.setState({hour: hours})
+    
+      const hourDetail=hours.map(
+        eachHourData => ({
+          temp:Math.round((eachHourData.temp - 32) * 0.55, 2),
+          datetime:eachHourData.datetime,
+          humidity:eachHourData.humidity,
+        }),
+      )
+
+    this.setState({hour: hourDetail})
     this.setState({srise: sunrise})
     this.setState({sset: sunset})
 
+   
     const response = await fetch(
-      `https://api.weatherapi.com/v1/current.json?key=2cab70eda4434e46b0165459240402&q=hyderabad&aqi=yes`,
+      `https://api.weatherapi.com/v1/current.json?key=2cab70eda4434e46b0165459240402&q=${o}&aqi=yes`,
     )
 
     const data = await response.json()
@@ -140,6 +214,9 @@ class WeatherDashboard extends Component {
   }
 
   getAnyData = async () => {
+    this.setState({
+      isLoading: true,
+    })
     const {searchInput} = this.state
 
     const response = await fetch(
@@ -153,7 +230,16 @@ class WeatherDashboard extends Component {
       const r = await re.json()
       this.setState({forecast: r.days.slice(1, 8)})
       const {hours} = r.days[0]
-      this.setState({hour: hours})
+
+      const hoursDetail=hours.map(
+        eachHourData => ({
+          temp:Math.round((eachHourData.temp - 32) * 0.55, 2),
+          datetime:eachHourData.datetime,
+          humidity:eachHourData.humidity,
+        }),
+      )
+
+      this.setState({hour: hoursDetail})
       const data = await response.json()
       this.setState({searchedData: data})
 
@@ -166,6 +252,10 @@ class WeatherDashboard extends Component {
   fake = () => {
     alert('wrong input')
     this.setState({searchInput: ''})
+    this.setState({
+      isLoading: false,
+    })
+
   }
 
   updateData = () => {
@@ -185,6 +275,10 @@ class WeatherDashboard extends Component {
     this.setState({humidit: searchedData.current.humidity})
     this.setState({windDirection: searchedData.current.wind_dir})
     this.setState({windSpeed: searchedData.current.wind_kph})
+
+    this.setState({
+      isLoading: false,
+    })
   }
 
   keyDown = event => {
@@ -192,9 +286,37 @@ class WeatherDashboard extends Component {
       this.getAnyData()
     }
   }
+  
 
+  getMyLocation = () => {
+    const location = window.navigator && window.navigator.geolocation;
+    
+    if (location) {
+      location.getCurrentPosition((position) => {
+  
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const r1=lat
+        const r2=lng
+        this.setState({ lat, lng });
+        this.getLoc(r1,r2)
+      }, (error) => {
+        this.setState({ lat: 'err-latitude', lng: 'err-longitude' });
+      });
+    }
+  };
+  
+   getLoc= async (l1,l2)=>{
+
+    const loc = await fetch (`https://nominatim.openstreetmap.org/reverse?format=json&lat=${l1}&lon=${l2}`)
+    console.log(loc)
+    const l =  await loc.json()
+    console.log(l)
+    this.getBlogItemData(l.display_name)
+   }
   render() {
     const {
+      name,
       temp,
       searchInput,
       location,
@@ -207,14 +329,16 @@ class WeatherDashboard extends Component {
       sset,
       srise,
       hour,
+      lat,
+      lng,
+      isLoading,
     } = this.state
-
+     
     return (
-      <div className="bg1">
-        <h1>Weather Dashboard</h1>
-
-        <div className="search-input-container">
-          <input
+        <div className="bg1">
+          <h1>Weather Dashboard</h1>
+          <div className="search-input-container">
+            <input
             type="search"
             placeholder="Search"
             className="search-input"
@@ -222,21 +346,25 @@ class WeatherDashboard extends Component {
             onChange={this.onChangeSearchInput}
             onKeyDown={this.keyDown}
             onClick={this.empty}
-          />
-          <img
+            />
+            <img
             src="https://assets.ccbp.in/frontend/react-js/app-store/app-store-search-img.png"
             alt="search icon"
             className="search-icon"
             onClick={this.getAnyData}
-          />
+            />
         </div>
-        <button className="home" type="button" onClick={this.getBlogItemData}>
+        <button className="home" type="button" onClick={this.getMyLocation}>
           home
         </button>
-        <div className="upper">
-          <h1 className="h1">{location}</h1>
+        <div  className="upper">
+          {isLoading?(
+           <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+           )
+         :(<>
+          <h1 className="h1">{name}{location}</h1>
           <p className="p p1">
-            {temp} <sup className="p p1">o</sup>
+            Temparature: {temp} <sup className="p p1">o</sup>
           </p>
           <p className="p p2">{condition}</p>
           <p className="p p3">humidity: {humidit}</p>
@@ -245,21 +373,29 @@ class WeatherDashboard extends Component {
           <p className="p p4">wind speed: {windSpeed}</p>
           <p className="p p3">wind direction: {windDirection}</p>
           <p className="p p2">Sunrise: {srise}</p>
+          <p className="p p1">latitude: {lat}</p>
+          <p className="p p2">longitude: {lng}</p>
           <p className="p p1">Sunset: {sset}</p>
-          <img src={mainImg} className="img" alt="img" />
-        </div>
-        <h1 clsssName="head2">Daily Forecast</h1>
+          <img src={mainImg} className="img" alt="img" /></>
+        )}
+      </div>
+        <h1>Daily Forecast</h1>
         <ul className="bg2">
           {forecast.map(day => (
-            <DailyItem key={day.datetime} forecastDetails={day} />
+            <DailyItem key={day.datetime} forecastDetails={day} isLoading={isLoading}/>
+        
           ))}
         </ul>
-        <h1 clsssName="head2">Hourly Forecast</h1>
-        <ul className="bg3">
-          {hour.map(eachHour => (
-            <HourItem key={eachHour.datetime} hourDetails={eachHour} />
+        <h1>Hourly Forecast</h1>
+        <div className="bg3">
+        {isLoading?(<Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />):(
+            <HourlyCoverage  hourDetails={hour} isLoading={isLoading}/>)}
+        </div>
+        <div className="bg4">
+        {hour.map(day => (
+            <HourItem key={day.datetime} hourDetails={day} isLoading={isLoading}/>
           ))}
-        </ul>
+        </div>
       </div>
     )
   }
